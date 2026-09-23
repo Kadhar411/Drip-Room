@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Jackets Vault | Curated Vintage & Archive Jackets | Drip Room</title>
+  <meta name="description" content="Shop 1-of-1 curated thrift jackets. Vintage windbreakers, Carhartt work jackets, leather bombers, and technical mountain shells with transparent condition grading.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧥</text></svg>">
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <div class="marquee-track">
+      <span>Exclusively Curated 1-of-1 Archive Jackets</span>
+      <span>Transparent 5-Tier Condition Grading on Every Piece</span>
+      <span>Free Express Shipping Across India on Orders ₹2,499+</span>
+      <span>Vintage Bombers, Workwear & Technical Shells Sourced Globally</span>
+      <span>Exclusively Curated 1-of-1 Archive Jackets</span>
+      <span>Transparent 5-Tier Condition Grading on Every Piece</span>
+      <span>Free Express Shipping Across India on Orders ₹2,499+</span>
+      <span>Vintage Bombers, Workwear & Technical Shells Sourced Globally</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo-wrap">
+          <button class="mobile-menu-btn nm-icon-btn" id="mobileMenuToggle" aria-label="Toggle navigation">
+            ☰
+          </button>
+          <a href="index.html" class="site-logo">
+            DRIP ROOM<span class="dot"></span>
+          </a>
+        </div>
+
+        <nav class="nav-desktop" aria-label="Main Navigation">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="product-listing.html" class="nav-link active">All Jackets</a>
+          <a href="product-listing.html?category=windbreakers" class="nav-link">Windbreakers</a>
+          <a href="product-listing.html?category=workwear" class="nav-link">Workwear</a>
+          <a href="product-listing.html?category=bombers" class="nav-link">Bombers</a>
+          <a href="product-listing.html?category=technical" class="nav-link">Technical Shells</a>
+          <a href="product-listing.html?category=track" class="nav-link">Track Jackets</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="nm-icon-btn header-search-trigger" aria-label="Search jackets" title="Search Jackets">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6.5"/>
+              <line x1="15.5" y1="15.5" x2="21" y2="21"/>
+            </svg>
+          </button>
+          <a href="product-listing.html" class="nm-icon-btn" aria-label="Saved Wishlist" title="Wishlist">
+            ♡
+            <span class="badge-count wishlist-count-badge" style="display: none;">0</span>
+          </a>
+          <a href="cart.html" class="nm-icon-btn" aria-label="Shopping Cart" title="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span class="badge-count cart-count-badge" style="display: none;">0</span>
+          </a>
+          <button class="nm-icon-btn" aria-label="User Account" title="Account" onclick="showToast('Account portal: Signed in as Jacket Collector', '👤');">
+            👤
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="mobile-nav-drawer" id="mobileNavDrawer">
+    <div class="drawer-header">
+      <span class="site-logo" style="font-size: 1.25rem;">DRIP ROOM<span class="dot"></span></span>
+      <button class="nm-icon-btn" id="closeNavDrawer" style="width: 36px; height: 36px;">✕</button>
+    </div>
+    <div class="drawer-links">
+      <a href="index.html" class="drawer-link"><span>Home</span> <span>→</span></a>
+      <a href="product-listing.html" class="drawer-link active"><span>All Archive Jackets</span> <span>→</span></a>
+      <a href="product-listing.html?category=windbreakers" class="drawer-link"><span>Windbreakers</span> <span>→</span></a>
+      <a href="product-listing.html?category=workwear" class="drawer-link"><span>Workwear Canvas</span> <span>→</span></a>
+      <a href="product-listing.html?category=bombers" class="drawer-link"><span>Varsity & Bombers</span> <span>→</span></a>
+      <a href="product-listing.html?category=technical" class="drawer-link"><span>Technical Mountain Shells</span> <span>→</span></a>
+      <a href="product-listing.html?category=track" class="drawer-link"><span>Retro Track Jackets</span> <span>→</span></a>
+      <a href="product-listing.html?category=fleece" class="drawer-link"><span>Fleece & Sherpas</span> <span>→</span></a>
+      <a href="cart.html" class="drawer-link"><span>My Jacket Bag</span> <span><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span></a>
+    </div>
+  </aside>
+
+  <!-- Mobile Filter Drawer -->
+  <aside class="mobile-filter-drawer" id="mobileFilterDrawer">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
+      <h3 style="font-size: 1.2rem;">Jacket Filters</h3>
+      <button class="nm-icon-btn" id="closeFilterDrawer" style="width: 36px; height: 36px;">✕</button>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+      <button class="nm-btn nm-btn-primary" style="width: 100%;" onclick="document.getElementById('closeFilterDrawer').click();">
+        Apply Jacket Filters
+      </button>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title">Condition Tiers</div>
+      <div class="filter-options-list">
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="filter-condition" value="NEW">
+          <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> NEW (Deadstock)</span>
+        </label>
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="filter-condition" value="LIKE NEW">
+          <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> LIKE NEW</span>
+        </label>
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="filter-condition" value="EXCELLENT">
+          <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> EXCELLENT</span>
+        </label>
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="filter-condition" value="GOOD">
+          <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> GOOD</span>
+        </label>
+        <label class="filter-checkbox-label">
+          <input type="checkbox" name="filter-condition" value="MINOR FLAW">
+          <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> MINOR FLAW</span>
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Shop Main Content -->
+  <main class="container">
+    <div style="padding-top: 2.5rem;">
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; gap: 0.5rem;">
+        <a href="index.html" style="color: var(--text-secondary);">Home</a> / 
+        <span style="color: var(--accent-cream);">Curated Jackets Vault</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+        <div>
+          <h1 style="font-size: clamp(2rem, 4vw, 3rem); text-transform: uppercase;">Curated Jackets Vault</h1>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.25rem;">
+            Exclusively authentic 1-of-1 pre-loved jackets. Handpicked, steam-sanitized, and measured flat.
+          </p>
+        </div>
+        <button class="nm-btn mobile-filter-trigger" id="mobileFilterTrigger">
+          ⚙️ Filter Jackets
+        </button>
+      </div>
+
+      <!-- Shop Layout (Sidebar + Grid) -->
+      <div class="shop-layout">
+        <!-- Desktop Filters Sidebar -->
+        <aside class="filter-sidebar" aria-label="Jacket Filters">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
+            <span style="font-family: var(--font-display); font-weight: 700; font-size: 1rem;">Filter Jackets</span>
+            <button id="clearFiltersBtn" style="font-size: 0.76rem; color: var(--text-muted); text-decoration: underline; cursor: pointer;">
+              Reset All
+            </button>
+          </div>
+
+          <!-- Jacket Silhouettes -->
+          <div class="filter-group">
+            <div class="filter-title">Jacket Silhouette</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="all" checked>
+                <span class="filter-checkbox-custom">All Jackets</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="windbreakers">
+                <span class="filter-checkbox-custom">Windbreakers</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="workwear">
+                <span class="filter-checkbox-custom">Workwear Canvas</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="bombers">
+                <span class="filter-checkbox-custom">Varsity & Bombers</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="technical">
+                <span class="filter-checkbox-custom">Technical Shells</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="track">
+                <span class="filter-checkbox-custom">Retro Track</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="leather">
+                <span class="filter-checkbox-custom">Leather Moto</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="radio" name="filter-category" value="puffers">
+                <span class="filter-checkbox-custom">Down Puffers</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Range Slider -->
+          <div class="filter-group">
+            <div class="filter-title">
+              <span>Max Price</span>
+              <span id="priceDisplay" style="color: var(--accent-cream);">₹6,000</span>
+            </div>
+            <input type="range" id="priceSlider" class="price-range-slider" min="1500" max="6000" step="100" value="6000">
+            <div class="price-range-values" style="font-size: 0.74rem; color: var(--text-muted);">
+              <span>₹1,500</span>
+              <span>₹6,000+</span>
+            </div>
+          </div>
+
+          <!-- Condition Grade Filter -->
+          <div class="filter-group">
+            <div class="filter-title">Condition Grading</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-condition" value="NEW">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> NEW (Deadstock)</span>
+              </label>
+
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-condition" value="LIKE NEW">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> LIKE NEW</span>
+              </label>
+
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-condition" value="EXCELLENT">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> EXCELLENT</span>
+              </label>
+
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-condition" value="GOOD">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> GOOD (Lived-in)</span>
+              </label>
+
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-condition" value="MINOR FLAW">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> MINOR FLAW (Disclosed)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Size Filter Chips -->
+          <div class="filter-group">
+            <div class="filter-title">Jacket Size</div>
+            <div class="size-chips-grid">
+              <button class="size-chip-btn" data-size="S">S</button>
+              <button class="size-chip-btn" data-size="M">M</button>
+              <button class="size-chip-btn" data-size="L">L</button>
+              <button class="size-chip-btn" data-size="XL">XL</button>
+            </div>
+          </div>
+
+          <!-- Outerwear Brands Filter -->
+          <div class="filter-group">
+            <div class="filter-title">Outerwear Brands</div>
+            <div class="filter-options-list">
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Nike">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Nike</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Carhartt">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Carhartt</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Arc'teryx">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Arc'teryx</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="The North Face">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> The North Face</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Ralph Lauren">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Ralph Lauren</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Diesel">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Diesel</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Stone Island">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Stone Island</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Starter">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Starter</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" name="filter-brand" value="Dickies">
+                <span class="filter-checkbox-custom"><span class="custom-checkbox"></span> Dickies</span>
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Product Grid & Toolbar Column -->
+        <section>
+          <!-- Toolbar -->
+          <div class="shop-toolbar">
+            <div style="display: flex; align-items: center; gap: 1rem; flex-grow: 1;">
+              <input type="text" id="shopSearchInput" class="nm-input shop-search-input" placeholder="Search jackets (e.g. bomber, Carhartt, XL)...">
+              <span id="shopResultsCount" style="font-size: 0.84rem; color: var(--text-muted); white-space: nowrap;">Loading jackets...</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <label for="shopSortSelect" style="font-size: 0.8rem; color: var(--text-muted);">Sort:</label>
+              <select id="shopSortSelect" class="shop-sort-select">
+                <option value="featured">Featured Jackets</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="condition">Condition Grade (Best First)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Products Grid -->
+          <div class="product-grid" id="shopProductGrid">
+            <!-- Hydrated by main.js with 100% jackets -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="site-logo">DRIP ROOM<span class="dot"></span></span>
+          <p>India’s premier digital vault exclusively for curated vintage and archive jackets.</p>
+        </div>
+        <div>
+          <h4 class="footer-heading">Jacket Silhouettes</h4>
+          <ul class="footer-links">
+            <li><a href="product-listing.html?category=windbreakers" class="footer-link">90s Windbreakers</a></li>
+            <li><a href="product-listing.html?category=workwear" class="footer-link">Canvas Work Jackets</a></li>
+            <li><a href="product-listing.html?category=bombers" class="footer-link">Varsity & Bombers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-heading">Thrift Transparency</h4>
+          <ul class="footer-links">
+            <li><a href="index.html#condition-system" class="footer-link">Jacket Condition Scale</a></li>
+            <li><a href="index.html" class="footer-link">Honest Defect Grading</a></li>
+            <li><a href="index.html" class="footer-link">Flat Measurements Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-heading">Customer Care</h4>
+          <ul class="footer-links">
+            <li><a href="cart.html" class="footer-link">My Jacket Bag</a></li>
+            <li><a href="checkout.html" class="footer-link">Shipping Rates</a></li>
+            <li><a href="index.html" class="footer-link">WhatsApp Sizing Concierge</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-heading">HQ</h4>
+          <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
+            Drip Room<br>
+            Market near Taj Hotel<br>
+            Ooty, Tamil Nadu<br>
+            <span style="color: var(--accent-cream);">driproom@gmail.com</span>
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 DRIP ROOM INC. CURATED ARCHIVE JACKETS ONLY. ALL RIGHTS RESERVED.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
