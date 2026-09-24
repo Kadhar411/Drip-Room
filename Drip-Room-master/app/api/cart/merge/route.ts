@@ -68,7 +68,9 @@ export async function POST(request: NextRequest) {
 
     // 4. Merge items
     for (const item of guestItems) {
-      if (item.product?.status !== 'active') {
+      const product = Array.isArray(item.product) ? item.product[0] : item.product;
+
+      if (product?.status !== 'active') {
         continue; // Don't merge sold or unavailable items
       }
 
@@ -80,7 +82,7 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (existingUserItem) {
-        if (!item.product?.is_one_of_one) {
+        if (!product.is_one_of_one) {
           await supabaseAdmin
             .from('cart_items')
             .update({ quantity: existingUserItem.quantity + item.quantity })
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
           .insert({
             cart_id: userCartId,
             product_id: item.product_id,
-            quantity: item.product?.is_one_of_one ? 1 : item.quantity,
+            quantity: product.is_one_of_one ? 1 : item.quantity,
           });
       }
     }

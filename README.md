@@ -113,4 +113,4 @@ npx serve .
 
 ## 📄 License
 
-MIT © 2026 Drip Room Inc. — Bengaluru, India.
+MIT © 2026 Drip Room Inc. — Ooty, Tamil Nadu, India.

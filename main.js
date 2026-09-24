@@ -361,8 +361,35 @@ const DRIP_PRODUCTS = [
 ];
 
 // ==========================================================================
-// 2. STATE MANAGERS (LOCALSTORAGE CART & WISHLIST)
+// 2. STATE MANAGERS (LOCALSTORAGE CART, WISHLIST & ORDER HISTORY)
 // ==========================================================================
+const OrderHistoryManager = {
+  KEY: "drip_order_history",
+
+  getOrders() {
+    try {
+      const stored = localStorage.getItem(this.KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  },
+
+  getOrderById(orderId) {
+    return this.getOrders().find(order => order.id === orderId) || null;
+  },
+
+  saveOrder(order) {
+    try {
+      const orders = this.getOrders();
+      orders.unshift(order);
+      localStorage.setItem(this.KEY, JSON.stringify(orders));
+    } catch (e) {
+      console.error("Order save error", e);
+    }
+  }
+};
+
 const CartManager = {
   KEY: "drip_cart_items",
   PROMO_KEY: "drip_promo_code",
@@ -583,6 +610,51 @@ function showToast(message, icon = "✓") {
 }
 
 // ==========================================================================
+// 3B. CUSTOMER ACCOUNT MODAL
+const DRIP_API_BASE = window.location.port === "5500" ? "http://localhost:3000" : "";
+
+function openAccountModal() {
+  let modal = document.getElementById("accountModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "accountModal";
+    modal.className = "modal-overlay";
+    modal.innerHTML = `<div class="modal-content-card" style="max-width:460px"><button class="modal-close-btn" aria-label="Close account form">✕</button><h3 style="margin-bottom:.4rem">Create your account</h3><p style="color:var(--text-secondary);font-size:.88rem;margin-bottom:1.25rem">Save your details for faster checkout and archive drops.</p><form id="accountForm" style="display:grid;gap:.55rem"><label>Name</label><input name="full_name" class="nm-input" type="text" autocomplete="name" required><label>Mobile number</label><input name="phone" class="nm-input" type="tel" autocomplete="tel" required><label>Email address</label><input name="email" class="nm-input" type="email" autocomplete="email" required><button class="nm-btn nm-btn-primary" type="submit">Create account <span>→</span></button><p id="accountFormMessage" role="status" style="min-height:1.5rem;color:var(--accent-cream);font-size:.82rem"></p></form></div>`;
+    document.body.appendChild(modal);
+    modal.querySelector(".modal-close-btn").addEventListener("click", closeAccountModal);
+    modal.addEventListener("click", event => { if (event.target === modal) closeAccountModal(); });
+    modal.querySelector("form").addEventListener("submit", submitAccountForm);
+  }
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAccountModal() {
+  const modal = document.getElementById("accountModal");
+  if (modal) modal.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+async function submitAccountForm(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const message = document.getElementById("accountFormMessage");
+  const button = form.querySelector("button[type='submit']");
+  button.disabled = true;
+  message.textContent = "Creating your account...";
+  try {
+    const response = await fetch(`${DRIP_API_BASE}/api/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(Object.fromEntries(new FormData(form).entries())) });
+    const result = await response.json();
+    if (!response.ok || !result.success) throw new Error(result.error || "Unable to create your account.");
+    message.textContent = result.data?.message || "Check your email to finish creating your account.";
+    form.reset();
+  } catch (error) {
+    message.textContent = error instanceof Error ? error.message : "Unable to create your account.";
+  } finally {
+    button.disabled = false;
+  }
+}
+
 // 4. QUICK VIEW MODAL
 // ==========================================================================
 function initQuickViewModal() {
@@ -1456,17 +1528,17 @@ function hydrateCheckoutPage() {
 
             <div class="form-group">
               <label class="form-label" for="shipStreet">Street Address & Landmark *</label>
-              <input type="text" id="shipStreet" class="nm-input" required placeholder="Flat 402, Nirvana Heights, Indiranagar">
+              <input type="text" id="shipStreet" class="nm-input" required placeholder="Market near Taj Hotel">
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
                 <label class="form-label" for="shipCity">City *</label>
-                <input type="text" id="shipCity" class="nm-input" required placeholder="Bengaluru">
+                <input type="text" id="shipCity" class="nm-input" required placeholder="Ooty">
               </div>
               <div class="form-group">
                 <label class="form-label" for="shipPin">Postal PIN Code *</label>
-                <input type="text" id="shipPin" class="nm-input" required placeholder="560038" maxlength="6">
+                <input type="text" id="shipPin" class="nm-input" required placeholder="643001" maxlength="6">
               </div>
             </div>
 
@@ -1618,8 +1690,8 @@ function hydrateCheckoutPage() {
 
         <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 2rem; text-align: left;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.85rem;">
-            <span style="color: var(--text-muted);">Tracking Code:</span>
-            <strong style="color: var(--accent-cream); font-family: var(--font-display);">DRIP-JACKET-${Math.floor(100000 + Math.random() * 900000)}</strong>
+            <span style="color: var(--text-muted);">Order ID:</span>
+            <strong id="orderTrackingCode" style="color: var(--accent-cream); font-family: var(--font-display);">—</strong>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
             <span style="color: var(--text-muted);">Estimated Dispatch:</span>
@@ -1627,9 +1699,14 @@ function hydrateCheckoutPage() {
           </div>
         </div>
 
-        <a href="index.html" class="nm-btn nm-btn-primary" style="width: 100%;" onclick="CartManager.clear();">
-          Return to Drip Room Home
-        </a>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <a id="viewOrderHistoryBtn" href="orders.html" class="nm-btn nm-btn-primary" style="width: 100%; text-align: center;">
+            View Order History
+          </a>
+          <a href="index.html" class="nm-btn" style="width: 100%; text-align: center;">
+            Return to Drip Room Home
+          </a>
+        </div>
       </div>
     </div>
   `;
@@ -1730,8 +1807,49 @@ function hydrateCheckoutPage() {
   });
 
   document.getElementById("btnPlaceOrder").addEventListener("click", () => {
+    const firstName = (document.getElementById("shipFirstName")?.value || "").trim();
+    const lastName = (document.getElementById("shipLastName")?.value || "").trim();
+    const phone = (document.getElementById("shipPhone")?.value || "").trim();
+    const email = (document.getElementById("shipEmail")?.value || "").trim();
+    const street = (document.getElementById("shipStreet")?.value || "").trim();
+    const city = (document.getElementById("shipCity")?.value || "").trim();
+    const pin = (document.getElementById("shipPin")?.value || "").trim();
+    const selectedPayCard = document.querySelector(".payment-method-card.selected[data-pay-type]");
+    const paymentMethod = selectedPayCard
+      ? (selectedPayCard.querySelector(".payment-method-header span")?.textContent?.trim() || "Paid")
+      : "Paid";
+    const trackingCode = `DRIP-${Math.floor(100000 + Math.random() * 900000)}`;
+    const cartSnapshot = JSON.parse(JSON.stringify(CartManager.getItems()));
+    const order = {
+      id: trackingCode,
+      placedAt: new Date().toISOString(),
+      status: "Confirmed",
+      items: cartSnapshot,
+      subtotal,
+      discount,
+      shipping: shippingCost,
+      total: Math.max(0, subtotal - discount + shippingCost),
+      paymentMethod,
+      delivery: shippingCost === 349 ? "Priority Express" : "Standard Express",
+      address: {
+        name: `${firstName} ${lastName}`.trim(),
+        phone,
+        email,
+        street,
+        city,
+        pin
+      }
+    };
+
+    OrderHistoryManager.saveOrder(order);
+    CartManager.clear();
+
     const successModal = document.getElementById("orderSuccessModal");
     if (successModal) {
+      const trackEl = document.getElementById("orderTrackingCode");
+      if (trackEl) trackEl.textContent = trackingCode;
+      const viewBtn = document.getElementById("viewOrderHistoryBtn");
+      if (viewBtn) viewBtn.href = `orders.html?order=${encodeURIComponent(trackingCode)}`;
       successModal.classList.add("open");
     }
   });
@@ -1763,7 +1881,155 @@ function hydrateCheckoutPage() {
 }
 
 // ==========================================================================
-// 12. INITIALIZATION ROUTER
+// 12. ORDER HISTORY PAGE (`orders.html`)
+// ==========================================================================
+function formatOrderDate(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function hydrateOrderHistoryPage() {
+  const container = document.getElementById("ordersMainContainer");
+  if (!container) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const requestedId = params.get("order");
+  const orders = OrderHistoryManager.getOrders();
+
+  if (requestedId) {
+    const order = OrderHistoryManager.getOrderById(requestedId);
+    if (!order) {
+      container.innerHTML = `
+        <div class="empty-cart-state">
+          <div class="empty-cart-icon">📦</div>
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.75rem;">Order Not Found</h2>
+          <p style="color: var(--text-secondary); max-width: 420px; margin: 0 auto 2rem; font-size: 0.95rem;">
+            We couldn't find that order on this device. Open Order History to see jackets you have already checked out.
+          </p>
+          <a href="orders.html" class="nm-btn nm-btn-primary">Back to Order History</a>
+        </div>
+      `;
+      return;
+    }
+    container.innerHTML = renderOrderDetail(order);
+    return;
+  }
+
+  if (!orders.length) {
+    container.innerHTML = `
+      <div class="empty-cart-state">
+        <div class="empty-cart-icon">📦</div>
+        <h2 style="font-size: 1.8rem; margin-bottom: 0.75rem;">No Orders Yet</h2>
+        <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 2rem; font-size: 0.95rem;">
+          After you place an order, every jacket you bought will appear here with its size, price, and delivery address.
+        </p>
+        <a href="product-listing.html" class="nm-btn nm-btn-primary">Shop Archive Jackets</a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="orders-list">
+      ${orders.map(order => {
+        const firstItem = (order.items && order.items[0]) || {};
+        const itemCount = (order.items || []).reduce((sum, item) => sum + (item.qty || 1), 0);
+        return `
+          <article class="order-card">
+            <div class="order-card-media">
+              <img src="${firstItem.image || ""}" alt="${escapeAttr(firstItem.name || "Ordered jacket")}">
+            </div>
+            <div class="order-card-body">
+              <div class="order-card-meta">
+                <strong class="order-id">${escapeHtml(order.id)}</strong>
+                <span class="order-status">${escapeHtml(order.status || "Confirmed")}</span>
+              </div>
+              <p class="order-card-title">${escapeHtml(firstItem.name || "Archive jacket")}${itemCount > 1 ? ` <span class="order-more">+${itemCount - 1} more</span>` : ""}</p>
+              <p class="order-card-sub">${formatOrderDate(order.placedAt)} · ₹${Number(order.total || 0).toLocaleString("en-IN")}</p>
+              <a class="nm-btn nm-btn-sm" href="orders.html?order=${encodeURIComponent(order.id)}">View ordered products</a>
+            </div>
+          </article>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderOrderDetail(order) {
+  const items = order.items || [];
+  const addr = order.address || {};
+  return `
+    <a href="orders.html" class="order-back-link">← All orders</a>
+    <div class="order-detail-layout">
+      <div>
+        <div class="order-detail-head">
+          <div>
+            <p class="order-id">${escapeHtml(order.id)}</p>
+            <h2 class="order-detail-title">Your ordered jackets</h2>
+            <p class="order-card-sub">Placed ${formatOrderDate(order.placedAt)}</p>
+          </div>
+          <span class="order-status">${escapeHtml(order.status || "Confirmed")}</span>
+        </div>
+        <div class="order-items">
+          ${items.map(item => `
+            <article class="order-item-row">
+              <a href="product-detail.html?id=${encodeURIComponent(item.id || "")}" class="order-item-img">
+                <img src="${item.image || ""}" alt="${escapeAttr(item.name || "Jacket")}">
+              </a>
+              <div>
+                <p class="cart-item-brand">${escapeHtml(item.brand || "Vintage Outerwear")}</p>
+                <a href="product-detail.html?id=${encodeURIComponent(item.id || "")}" class="cart-item-title">${escapeHtml(item.name || "Archive jacket")}</a>
+                <p class="cart-item-meta">Size: ${escapeHtml(item.size || "—")} · Condition: ${escapeHtml(item.condition || "—")} · Qty: ${item.qty || 1}</p>
+              </div>
+              <strong class="order-item-price">₹${Number(item.price || 0).toLocaleString("en-IN")}</strong>
+            </article>
+          `).join("")}
+        </div>
+      </div>
+      <aside class="order-summary-box">
+        <h3 class="summary-title">Order summary</h3>
+        <div class="summary-rows">
+          <div class="summary-row"><span>Subtotal</span><span>₹${Number(order.subtotal || 0).toLocaleString("en-IN")}</span></div>
+          ${order.discount > 0 ? `<div class="summary-row" style="color: #a4c09d;"><span>Promo</span><span>−₹${Number(order.discount).toLocaleString("en-IN")}</span></div>` : ""}
+          <div class="summary-row"><span>Shipping</span><span>${order.shipping === 0 ? "FREE" : "₹" + Number(order.shipping || 0).toLocaleString("en-IN")}</span></div>
+          <div class="summary-row total-row"><span>Paid</span><span>₹${Number(order.total || 0).toLocaleString("en-IN")}</span></div>
+        </div>
+        <p class="order-ship-label">Delivering to</p>
+        <p class="order-ship-address">
+          ${escapeHtml(addr.name || "")}<br>
+          ${escapeHtml(addr.street || "")}<br>
+          ${escapeHtml([addr.city, addr.pin].filter(Boolean).join(" — "))}<br>
+          ${escapeHtml(addr.phone || "")}<br>
+          ${escapeHtml(addr.email || "")}
+        </p>
+        <p class="order-card-sub" style="margin-top: 1rem;">${escapeHtml(order.delivery || "Standard Express")} · ${escapeHtml(order.paymentMethod || "Paid")}</p>
+      </aside>
+    </div>
+  `;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
+
+// ==========================================================================
+// 13. INITIALIZATION ROUTER
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
   CartManager.updateHeaderBadge();
@@ -1771,6 +2037,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initQuickViewModal();
   initSearchModal();
+  document.querySelectorAll('a[aria-label="Order History"]').forEach(accountLink => {
+    accountLink.addEventListener("click", event => {
+      event.preventDefault();
+      openAccountModal();
+    });
+  });
 
   const mobileToggleBtn = document.getElementById("mobileMenuToggle");
   const mobileDrawer = document.getElementById("mobileNavDrawer");
@@ -1810,4 +2082,5 @@ document.addEventListener("DOMContentLoaded", () => {
   hydrateProductDetailPage();
   hydrateCartPage();
   hydrateCheckoutPage();
+  hydrateOrderHistoryPage();
 });

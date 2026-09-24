@@ -613,6 +613,95 @@ function showToast(message, icon = "✓") {
   }, 3200);
 }
 
+// ========================================================================== 
+// 3B. CUSTOMER ACCOUNT MODAL
+// ==========================================================================
+const DRIP_API_BASE = window.location.port === "5500" ? "http://localhost:3000" : "";
+
+function initAccountModal() {
+  if (document.getElementById("accountModal")) return;
+
+  const modal = document.createElement("div");
+  modal.id = "accountModal";
+  modal.className = "modal-overlay";
+  modal.innerHTML = `
+    <div class="modal-content-card account-modal-box">
+      <button class="modal-close-btn" id="closeAccountModal" aria-label="Close account form">✕</button>
+      <div class="account-modal-heading">
+        <span class="eyebrow">DRIP ROOM MEMBERS</span>
+        <h3>Create your account</h3>
+        <p>Save your details for faster checkout and archive drops.</p>
+      </div>
+      <form id="accountForm" class="account-form">
+        <label for="accountName">Name</label>
+        <input id="accountName" name="full_name" class="nm-input" type="text" autocomplete="name" required>
+        <label for="accountPhone">Mobile number</label>
+        <input id="accountPhone" name="phone" class="nm-input" type="tel" autocomplete="tel" required>
+        <label for="accountEmail">Email address</label>
+        <input id="accountEmail" name="email" class="nm-input" type="email" autocomplete="email" required>
+        <button class="nm-btn nm-btn-primary" type="submit">Create account <span>→</span></button>
+        <p id="accountFormMessage" class="account-form-message" role="status"></p>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeAccountModal();
+  });
+  document.getElementById("closeAccountModal").addEventListener("click", closeAccountModal);
+  document.getElementById("accountForm").addEventListener("submit", submitAccountForm);
+}
+
+function openAccountModal() {
+  initAccountModal();
+  const modal = document.getElementById("accountModal");
+  const message = document.getElementById("accountFormMessage");
+  if (message) message.textContent = "";
+  if (modal) {
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    document.getElementById("accountName")?.focus();
+  }
+}
+
+function closeAccountModal() {
+  const modal = document.getElementById("accountModal");
+  if (modal) modal.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+async function submitAccountForm(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector("button[type='submit']");
+  const message = document.getElementById("accountFormMessage");
+  const payload = Object.fromEntries(new FormData(form).entries());
+
+  button.disabled = true;
+  button.classList.add("is-loading");
+  message.textContent = "Creating your account...";
+
+  try {
+    const response = await fetch(`${DRIP_API_BASE}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) throw new Error(result.error || "Unable to create your account.");
+
+    message.textContent = result.data?.message || "Check your email to finish creating your account.";
+    form.reset();
+  } catch (error) {
+    message.textContent = error instanceof Error ? error.message : "Unable to create your account.";
+  } finally {
+    button.disabled = false;
+    button.classList.remove("is-loading");
+  }
+}
+
 // ==========================================================================
 // 4. QUICK VIEW MODAL
 // ==========================================================================
@@ -1487,17 +1576,17 @@ function hydrateCheckoutPage() {
 
             <div class="form-group">
               <label class="form-label" for="shipStreet">Street Address & Landmark *</label>
-              <input type="text" id="shipStreet" class="nm-input" required placeholder="Flat 402, Nirvana Heights, Indiranagar">
+              <input type="text" id="shipStreet" class="nm-input" required placeholder="Market near Taj Hotel">
             </div>
 
             <div class="form-grid-2">
               <div class="form-group">
                 <label class="form-label" for="shipCity">City *</label>
-                <input type="text" id="shipCity" class="nm-input" required placeholder="Bengaluru">
+                <input type="text" id="shipCity" class="nm-input" required placeholder="Ooty">
               </div>
               <div class="form-group">
                 <label class="form-label" for="shipPin">Postal PIN Code *</label>
-                <input type="text" id="shipPin" class="nm-input" required placeholder="560038" maxlength="6">
+                <input type="text" id="shipPin" class="nm-input" required placeholder="643001" maxlength="6">
               </div>
             </div>
 
@@ -1849,6 +1938,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initQuickViewModal();
   initSearchModal();
+  initAccountModal();
 
   const mobileToggleBtn = document.getElementById("mobileMenuToggle");
   const mobileDrawer = document.getElementById("mobileNavDrawer");

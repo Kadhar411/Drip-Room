@@ -89,9 +89,15 @@ export async function incrementCouponUsage(couponId: string): Promise<void> {
   const { error } = await supabaseAdmin.rpc('increment_coupon_usage', { p_coupon_id: couponId });
   if (error) {
     // If RPC doesn't exist, fallback to direct increment
+    const { data: coupon } = await supabaseAdmin
+      .from('coupons')
+      .select('usage_count')
+      .eq('id', couponId)
+      .single();
+
     await supabaseAdmin
       .from('coupons')
-      .update({ usage_count: supabaseAdmin.rpc ? undefined : 1 })
+      .update({ usage_count: (coupon?.usage_count ?? 0) + 1 })
       .eq('id', couponId);
   }
 }

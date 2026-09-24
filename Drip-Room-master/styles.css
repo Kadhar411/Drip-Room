@@ -1004,10 +1004,37 @@ h1, h2, h3, h4, h5, h6 {
    Condition Grading Transparency Section
    ========================================================================== */
 .condition-guide-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 5rem 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
-  background: #0f1012;
+  background: #0c0d0e;
+}
+
+.condition-guide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("condition-jacket-exploded.jpg");
+  background-size: cover;
+  background-position: center 30%;
+  filter: saturate(0.85);
+}
+
+.condition-guide-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 9, 10, 0.72) 0%, rgba(8, 9, 10, 0.58) 42%, rgba(8, 9, 10, 0.82) 100%),
+    radial-gradient(ellipse at center, rgba(8, 9, 10, 0.15) 0%, rgba(8, 9, 10, 0.7) 100%);
+}
+
+.condition-guide-section > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .condition-cards-grid {
@@ -2297,6 +2324,63 @@ h1, h2, h3, h4, h5, h6 {
 .search-modal-box {
   max-width: 600px;
   background: #151619;
+}
+
+.account-modal-box {
+  max-width: 460px;
+  background: #151619;
+}
+
+.account-modal-heading {
+  padding-right: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.account-modal-heading h3 {
+  font-size: 1.65rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.account-modal-heading p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.eyebrow {
+  color: var(--accent-amber);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.account-form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.account-form label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 0.45rem;
+}
+
+.account-form .nm-btn {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.account-form-message {
+  min-height: 1.5rem;
+  color: var(--accent-cream);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.account-form .is-loading {
+  opacity: 0.65;
+  cursor: wait;
 }
 
 .search-results-list {
